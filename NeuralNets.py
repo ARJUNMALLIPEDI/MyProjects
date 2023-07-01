@@ -136,19 +136,7 @@ def model_to_string(model):
     sms = re.sub('_\d','', sms)  
     return sms
 
-"""In this notebook, we will:
 
-- Use a pre-built CNN function to classify roads vs. dogs.
-- Build neural networks from scratch in Keras.
-- Experiment with building CNN models from scratch in Keras.
-- (Advanced, Optional) Build CNN models for distinguishing cats from dogs, and even experiment with implementing a famous architecture!
-
-**Change Hardware Accelerator to GPU to train faster (Runtime -> Change Runtime Type -> Hardware Accelerator -> GPU)**
-
-#Loading in Data
-
-Once again, let's load in our dog/road dataset and create our training and test set. **What's the shape of each dataset? Why?**
-"""
 
 # load our data
 data, labels = load_data()
@@ -156,20 +144,7 @@ data = data.astype(float)
 labels = categorical_to_numpy(labels)
 inputs_train, inputs_test, labels_train, labels_test = model_selection.train_test_split(data, labels, test_size=0.2, random_state=1)
 
-"""# Models for Vision: Convolutional Neural Networks
 
-###Exercise: Exploring Hyperparameters ✍️
-
-As you know, there is a famous type of neural network known as convolutional neural networks (CNNs). These types of neural networks work particularly well on problems to do with computer vision. Let's try one out!
-
-To load up a simple CNN on scikit-learn, just run:
-
-`cnn = CNNClassifier(num_epochs, layers, dropout)`
-
-Work with your instructors to review what each parameter means and how it affects the model! The **dropout** represents how many weights we set to 0 during training time, which can help prevent overfitting.
-
-**Try different values of num_epochs, layers, and dropout so that you get the best possible accuracy on the test set using `model.score()`**!
-"""
 
 cnn = CNNClassifier(5, 2, 0.5)
 cnn.fit(inputs_train, labels_train)
@@ -180,55 +155,13 @@ print (cnn.score(inputs_test, labels_test))
 
 ### END CODE
 
-"""**How well did your neural network perform?** 
 
-CNNs typically perform better than fully-connected neural networks on vision problems, but, as before, they aren't always consistent. They are also sensitive to a number of parameters.
-
-## Training and Validation Curves
-
-An important aspect of training neural networks is to prevent overfitting. **How would we recognize overfitting?**
-
-In the first line of code below, we first **fit** the model on the training data and pass in some validation (or test) data to evaluate it. We call it the **history** because we want to retain information about the accuracy at each epoch.
-
-In the second line we plot the history so that we can compare the training and validation accuracies.  
-
-```
-history = model.fit(inputs_train, labels_train, validation_data=(inputs_test, labels_test))
-plot_acc(history)
-```
-
-###Exercise: Plotting a training vs. validation curve for our CNN ✍️
-
-**After how many epochs does the model begin to overfit? How does this vary as you vary the number of hidden layers and dropout?** Overfitting occurs when the validation accuracy starts to drop below the training accuracy.
-"""
 
 ### YOUR CODE HERE
 
 ### END CODE
 
-"""# Building Neural Networks from Scratch in Keras 
 
-So far, we've used helper functions which pre-build Keras neural network models. Now, we will build them on our own!
-
-Let's build a simple Neural Network that solves a familiar problem: distinguishing between dogs and roads.
-
-###Exercise: Building a simple Neural Network using Keras! ✍️
-
-We're going to build a larger version of this model: 
-
-![](http://cs231n.github.io/assets/nn1/neural_net.jpeg)
-
-This network can be described as: 
-* Input Layer: 3072 (32 pixels x 32 pixels x 3 color channels)
-* Layer 1 (Hidden): 32 neurons that are activated by `'relu'`
-* Layer 2 (Output): 2 neurons that are activated by `'softmax'`
-
-
-We also want to compile the model with
-`loss = 'categorical_crossentropy'`
-
-Try filling in the blanks below and walking through each line! **If you want a hint or more details, check out the optional reference below.**
-"""
 
 # Fill in the blanks with your group!
 ### YOUR CODE HERE:
@@ -241,90 +174,7 @@ model_1.compile(loss='categorical_crossentropy',
 model_1.fit(inputs_train, labels_train, epochs=20)
 ### END CODE
 
-"""####**Optional Reference**
 
-Here's some information about each step of the process. **You don't need to read through all this - check it as a reference if needed!**
-
-**1. Specify model**
-
-```
-model = Sequential()
-```
-In this line of code, we build our network where the information flows from LEFT to RIGHT through the network in ONE DIRECTION as opposed to multiple directions. Neurons on the right never pass informations to neurons on the left of it. 
-
-
-**2. Add layers to the network**
-```
-model.add(Dense(32, input_dim=3072, activation = 'relu'))
-```
-In this code, we add a layer of neurons to our network. 
-
-This layer consists of 32 neurons. Each neuron is DENSE and connects to all of the previous layer's inputs and all of the subsequent layer's outputs. We specify that there are 3072 inputs here, one for each color channel.
-
-We also specify what kind of output the neuron will give. If you want the neuron to output a number between 0 and 1 (like a probability!) you would use 'softmax' or 'sigmoid'. If you want the neuron to output any number, you can use 'linear'! You'll also often see 'relu', which is when a neuron will only output positive numbers. 
-
-```
-model.add(Dense(2, activation = 'softmax'))
-```
-This code is our output layer. We specify that it has two neurons (one that gives the probability of the image being a dog and one that gives the probability of the image being a cat). We specify a softmax activation because we want our probabilities to be between 0 and 1.
-
-**3. Turn the model on by compiling it** 
-
-After having built the network, we want to train and use it, so we have to 'compile' it to prepare. We have to specify at the very least: a loss (how the model measures the quality of its weights), an optimizer (which adjusts the weights), and a metric (how to evaluate our results). Here are some common choices:
-```
-model.compile(loss='mean_squared_error',
-optimizer = 'adam',
-metrics = ['mean_squared_error'])
-  ```
-
-Once we've created our network, we can use it very simply! Just like we did with sklearn, we define our input data (inputs_test), the true predictions from that data (labels_train), and the number of epochs (passes through our entire dataset). We train our model with `fit`. 
-
-```
-model.fit(inputs_train, labels_train)
-```
-
-To use the model, you can use it to predict something with:
-```
-y = model.predict_classes(x)
-```
-
-You can actually use the model before you even train it! It just won't perform very well.
-
-###(Optional) Exercise: Building a multi-layer Neural Net using Keras ✍️
-
-Let's try another, bigger example!
-
-* Input Layer: 3072 Dimensions
-
-* Layer 1: 32 neurons that are activated by `'relu' `and take in 3 inputs.
-
-* Layer 2: 16 neurons that are activated by `'relu'`
-
-* Layer 3 (out): 2 neurons that is activated by `'sigmoid'`
-
-Compile the model with
-`loss = 'binary_crossentropy'`
-"""
-
-### YOUR CODE HERE
-
-### END CODE
-
-"""##Exercise: Building a CNN using Keras! ✍️
-
-Now that we know how to build simple neural networks in Keras, let's build a CNN that will perform well on our data set of car and road images. 
-
-Below is Keras code for a CNN. It will run as-is on the conscientious cars dataset. However, the performance is suboptimal. Add more layers and change the neural network hyperparameters so that the performance will be better. **Can you get the train and validation accuracy to both be higher than 90%?**
-
-The Keras core layer API may be a useful reference: https://keras.io/layers/core/ 
-
-In particular and in addition to adding more of the existing convolutional layers and activations, consider using the following layers after a convolution + activation:
-
-`Dropout(N)`
-
-`MaxPooling2D(pool_size=(N, N))`
-
-"""
 
 model = Sequential()
 model.add(Reshape((32, 32, 3)))
@@ -359,26 +209,11 @@ history = model.fit(inputs_train, labels_train, \
                     epochs=70)
 plot_acc(history)
 
-"""**What interesting observations** do you make from the graph? How many epochs should you train for?
 
-We can also print out the structure of our model. What do the parts of the summary mean?
-"""
-
-model.summary()
-
-"""#Advanced: Cats vs. Dogs with CNN
-
-So far, we've trained a CNN to distinguish between small images of cats and small images of dogs. It's more challenging and time-consuming to train CNNs for bigger images or harder tasks, like distinguishing dogs from cats (which look a lot more like dogs than roads do!)
-
-In this exercise, you'll adapt your previous model to classify large images of dogs vs. cats, and then try implementing a famous CNN architecture. Along the way, you'll deal with some of the debugging that machine learning engineers often have to handle.
-"""
 
 #@title Run this to load cat and dog data. { display-mode: "form" }
 
-#Code here from https://colab.research.google.com/github/google/eng-edu/blob/master/ml/pc/exercises/image_classification_part1.ipynb#scrollTo=4PIP1rkmeAYS
 
-import tensorflow as tf
-import os 
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from google.colab.patches import cv2_imshow
 import cv2
@@ -417,62 +252,25 @@ val_data = validation_image_generator.flow_from_directory(batch_size=1000,
 cd_train_inputs, cd_train_labels = train_data
 cd_test_inputs, cd_test_labels = val_data
 
-"""**Run the code below to see the dimensions of our training and validation data. What does each number mean? What is different than our previous dataset?** """
+
 
 print (cd_train_inputs.shape) 
 print (cd_train_labels.shape) 
 print (cd_test_inputs.shape) 
 print (cd_test_labels.shape)
 
-"""**Run this code to see a random image from our training data (different each time).**"""
+
 
 index = np.random.randint(len(cd_train_inputs))
 plt.imshow(cd_train_inputs[index]/255)
 plt.show()
 print("Label:",cd_train_labels[index])
 
-"""**By adapting code from the previous exercise, build, train, and test a CNN to classify cats vs. dogs.**
-**Hints:**
-*   Use print(model.summary()) for a useful visualization of your model's architecture. Compare the summary of your cat/road and cat/dog classifiers.
-*  Substitute the names of the new datasets.
-*  Get a "first try" working by making small adjustments to a previous model before trying to optimize the accuracy. You can temporarily comment out layers as you figure things out.
-*  The outputs have different shapes betweeen the two datasets. What do you need to change? (You will get an ValueError that suggests how to transform the output to a one-hot encoding.) 
-*  If you run out of memory, restart the notebook and/or use your knowledge of convolution arithmetic to reduce the size of an intermediate output (see [Keras documentation](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Conv2D)).
-* Dropout layers help reduce overfitting.
-
-"""
 
 model = Sequential()
-#TODO: Your code here to build, train, and test a cats vs. dogs CNN!
-#If you run into errors, see the hints above for help debugging! 
-#
-#
 
-"""#Advanced Challenge: Implementing a Famous Architecture for Cats vs. Dogs
 
-Having trouble designing an effective architecture? Try implementing a version of AlexNet, one of the most famous CNNs for image convolution ever. You can find this image and other useful information on this network [here](https://towardsdatascience.com/the-w3h-of-alexnet-vggnet-resnet-and-inception-7baaaecccc96).
-
-![](https://lh4.googleusercontent.com/gFAxn9Z-Y1lgkNy2GfsqjXy1DvSuYF8rvP3CslRvmuoP5SUaJMrEOr24YShU_LwalLpYNJFwpJgcDh9whk9XrMOGQ1ADQ9FY_0saicCVH0jsNPDKOYBcTG4YhbqpbPolW4hZSdUsDQ)
-
-How do we read this diagram?
-
-On the left side, we start with images of dimension 227x227x3 (RGB). We apply a filter composed of 96 kernels of size 11x11, with stride size 4. We end up with data of dimension 55x55x96. We pass through multiple layers of convolution and max pooling as shown, before ending with three dense (fully connected) layers.
-
-Not shown: each layer uses ReLU activation, and we include dropout before the first two dense layers. Make sure to include those!
-
-You'll want to adjust some of these dimensions, for a few reasons: we're starting with 150x150 rather than 227x227 images, ending with 2 labels rather than 1000, and have limited data and memory. Use your knowledge of convolution arithmetic (see CNN slides) and the [Keras documentation](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Conv2D) to change the stride, kernel, and/or padding.
-
-Use model.summary() to understand the dimensions of your data at each step. To speed things up as you're building, you can set the number of epochs to 1.
-"""
 
 model = Sequential()
 #TODO: Your code to run, train, and test AlexNet here:
 
-"""You might find that even AlexNet isn't working that well for you!
-
-This is because having a good architecture is only half the battle: AlexNet is a complex model designed to learn from millions of images. We're using a small dataset of only 2000 training images, so it's not surprising that our results aren't great. Our model is overfitting: essentially memorizing the few training images, rather than really learning the difference between a cat and a dog. (The advantage is that our model trains quickly.)
-
-To get really good performance, we need more data. If we can't find more, we could use *data augmentation*: inventing new training data by transforming our existing images. You can read more about it at https://blog.keras.io/building-powerful-image-classification-models-using-very-little-data.html.
-
-![](https://images.pexels.com/photos/316/black-and-white-animal-dog-pet.jpg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940)
-"""
